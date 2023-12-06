@@ -11,6 +11,8 @@ async function handleLogin(userName, userPass) {
   try {
     await connectDB()
 
+    console.log('After connecting to the DB')
+
     let loginResp = null
     if (/^\S+@\S+\.\S+$/.test(userName)) {
       loginResp = await usersModel.findOne({ email: userName })
@@ -28,6 +30,8 @@ async function handleLogin(userName, userPass) {
         userPass,
         loginResp?.password,
       )
+
+      console.log('After handle login auth')
 
       if (isAuthenticated) {
         const {
