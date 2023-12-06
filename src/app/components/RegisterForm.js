@@ -222,11 +222,10 @@ const RegisterForm = () => {
           </select>
         </div>
         {Array.from({ length: 3 }, (_, index) => (
-          <div className="mb-6">
+          <div className="mb-6" key={`course-option-${index}`}>
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor={`course-option-${index}`}
-              key={`course-option-${index}`}
             >
               Course Option {index + 1}
             </label>
@@ -235,12 +234,12 @@ const RegisterForm = () => {
               id={`course-option-${index}`}
               name={`course-option-${index}`}
             >
-              {courseOptions.map((course, index) => (
+              {courseOptions.map((course) => (
                 <option
-                  key={`${course?.courseId}-${index}`}
-                  value={course?.courseId}
+                  key={course.courseId} // Use a unique key for each option
+                  value={course.courseId}
                 >
-                  {course?.courseTitle}
+                  {course.courseTitle}
                 </option>
               ))}
             </select>
