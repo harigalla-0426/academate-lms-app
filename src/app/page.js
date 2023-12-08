@@ -24,7 +24,7 @@ export default async function Home() {
               height={800}
             />
           </div>
-          <div className="text-xl ml-3">
+          <div className="text-xl ml-10 xl:ml-4">
             Welcome to{' '}
             <span className="font-bold text-xl text-emerald-600">
               Academate

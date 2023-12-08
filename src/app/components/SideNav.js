@@ -21,8 +21,8 @@ const SideNavBar = () => {
     { name: 'Home', isHeader: true },
     'Dashboard',
     'Courses',
-    'Files',
-    'Forum',
+    'Announcements',
+    'Chat Forum',
     { name: 'Submissions', isHeader: true },
     'Assignments',
     'Grades',
@@ -63,7 +63,13 @@ const SideNavBar = () => {
             </Header>
           ) : (
             <ListItem button key={index}>
-              <ListItemText primary={name} />
+              {name === 'Announcements' ? (
+                <ListItemText>
+                  <a href="/announcelist">{name}</a>
+                </ListItemText>
+              ) : (
+                <ListItemText primary={name} />
+              )}
             </ListItem>
           )
         })
