@@ -8,7 +8,6 @@ import { redirect } from 'next/navigation'
 import { cleanUpForgetToken } from '../actions/deleteActions'
 
 function PasswordReset({ email, accessToken }) {
-  // console.log('PasswordReset', email)
   const formRef = useRef('')
 
   const resetHandler = async (formData) => {

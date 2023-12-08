@@ -55,6 +55,8 @@ function ChatComponent({ courseName, messages, chatId }) {
 
     const { success, message } = await addChat(chatId, chatObj)
 
+    // Make toast container global
+
     if (!success) {
       toast.error(message)
     }

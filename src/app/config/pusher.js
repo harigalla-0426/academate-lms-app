@@ -1,6 +1,7 @@
 import PusherServer from 'pusher'
 import PusherClient from 'pusher-js'
 
+// make these env variables hidden
 export const pusherClient = new PusherClient('9ad65eeb8273ebfc3081', {
   cluster: 'us2',
   authEndpoint: '/api/pusher-auth',

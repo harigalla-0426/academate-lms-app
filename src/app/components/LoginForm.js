@@ -1,20 +1,14 @@
 'use client'
 
 import { useRef } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
-// import { useSession } from 'next-auth/react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { handleLogin } from '../actions/postActions'
 import { GoogleLoginButton } from 'react-social-login-buttons'
-// import { redirect } from 'next/navigation'
 
 const LoginForm = () => {
   const formRef = useRef('')
-  const searchParams = useSearchParams()
-
-  // const { data: session } = useSession({ required: true })
 
   async function validateCredentials(data) {
     formRef.current.reset()

@@ -15,10 +15,6 @@ export default async function Foo() {
     loginData = await usersModel.find({})
   }
 
-  // if (!session) {
-  //   redirect('/login?callbackUrl=/foo')
-  // }
-
   console.log('Foo component called')
 
   return (
