@@ -191,8 +191,11 @@ const AnnounceDueSoon = ({ courseDeadlines, viewAssignmentMode }) => {
             </Box>
             <Box className="flex flex-col items-center">
               {sortedDeadlines.map((assignment) => (
-                <a href={`assignments/${assignment?.id.split('-')[0]}`}>
-                  <AssignmentCard key={assignment.id} assignment={assignment} />
+                <a
+                  key={assignment.id}
+                  href={`assignments/${assignment?.id.split('-')[0]}`}
+                >
+                  <AssignmentCard assignment={assignment} />
                 </a>
               ))}
             </Box>
