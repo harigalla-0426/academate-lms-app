@@ -74,6 +74,55 @@ const hasChatAccess = async (chatId, userId, userType) => {
   }
 }
 
+const getCourses = async (courseList) => {
+  await connectDB()
+
+  try {
+    const registeredCourses = await coursesModel.find({
+      _id: { $in: courseList },
+    })
+    // console.log('registeredCourses', registeredCourses)
+
+    if (!registeredCourses || !registeredCourses[0]?.title) {
+      throw new Error('ID not found in the courses DB!')
+    }
+
+    const coursesObj = registeredCourses.map(
+      ({
+        _id,
+        title,
+        description,
+        instructor,
+        studentsEnrolled,
+        assignments,
+        discussions,
+        announcements,
+      }) => {
+        return {
+          courseId: _id.toString(),
+          title,
+          description,
+          instructor,
+          studentsEnrolled,
+          assignments,
+          discussions,
+          announcements,
+        }
+      },
+    )
+
+    return coursesObj
+  } catch (error) {
+    console.log('Get courses Error', error)
+    return {
+      success: false,
+      message:
+        error?.message ||
+        'Oops! Something went wrong while fetching your courses!',
+    }
+  }
+}
+
 const getAnnouncements = async (courseId) => {
   await connectDB()
 
@@ -96,4 +145,4 @@ const getAnnouncements = async (courseId) => {
   }
 }
 
-export { getUser, getChats, hasChatAccess, getAnnouncements }
+export { getUser, getChats, hasChatAccess, getAnnouncements, getCourses }

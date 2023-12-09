@@ -7,7 +7,7 @@ import { NotificationsSharp } from '@mui/icons-material'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import ChatIcon from '@mui/icons-material/Chat'
 
-const Courses = () => {
+const Courses = ({ courseCardInfo }) => {
   const getMuiIcon = (icon) => {
     switch (icon) {
       case 'assignments':
@@ -22,6 +22,29 @@ const Courses = () => {
         return null
     }
   }
+
+  const getGrade = (courseGPA) => {
+    switch (true) {
+      case courseGPA >= 95:
+        return `${courseGPA}% - A+`
+      case courseGPA >= 90:
+        return `${courseGPA}% - A`
+      case courseGPA >= 85:
+        return `${courseGPA}% - B+`
+      case courseGPA >= 80:
+        return `${courseGPA}% - B`
+      case courseGPA >= 70:
+        return `${courseGPA}% - C`
+      case courseGPA >= 65:
+        return `${courseGPA}% - D`
+      case courseGPA >= 60:
+        return `${courseGPA}% - E`
+      default:
+        return 'F'
+    }
+  }
+
+  // console.log('courseCardInfo', courseCardInfo)
 
   return (
     <div>
@@ -43,12 +66,12 @@ const Courses = () => {
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'center',
+          justifyContent: 'left',
         }}
       >
-        {[...Array(4).keys()].map((index) => (
+        {courseCardInfo.map(({ courseId, title, courseGPA }) => (
           <div
-            key={index}
+            key={courseId}
             style={{
               width: '320px',
               height: '200px',
@@ -111,7 +134,11 @@ const Courses = () => {
                 fontWeight: '400',
               }}
             >
-              <div>78.28% - A +</div>
+              {courseGPA === 0 ? (
+                <div>NR - %</div>
+              ) : (
+                <div>{getGrade(courseGPA)}</div>
+              )}
             </div>
             <div
               style={{
@@ -135,7 +162,7 @@ const Courses = () => {
                   fontWeight: '600',
                 }}
               >
-                B551
+                {courseId.slice(-4)}
               </div>
               <div
                 style={{
@@ -150,7 +177,7 @@ const Courses = () => {
                   fontWeight: '400',
                 }}
               >
-                Elements of Artificial Intelligence
+                {title}
               </div>
             </div>
             <div
@@ -169,10 +196,10 @@ const Courses = () => {
               }}
             >
               {[
-                { icon: 'assignments', link: '/assignments' },
-                { icon: 'announcement', link: '/announcement' },
+                { icon: 'assignments', link: `/assignments/${courseId}` },
+                { icon: 'announcement', link: `/announcements/${courseId}` },
                 { icon: 'files', link: '/files' },
-                { icon: 'chat', link: '/chat' },
+                { icon: 'chat', link: `/chat/${courseId}` },
               ].map((item) => (
                 <a key={item.icon} href={item.link}>
                   <div

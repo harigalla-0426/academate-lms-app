@@ -59,6 +59,7 @@ export const authOptions = {
       if (user && loggedUser) {
         token.user.userId = loggedUser._id
         token.user.userType = loggedUser.userType
+        token.user.courses = loggedUser.courses
       }
       console.log('user jwt token', token)
       return token

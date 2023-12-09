@@ -41,6 +41,7 @@ async function handleLogin(userName, userPass) {
           firstName,
           lastName,
           userType,
+          courses,
         } = loginResp
 
         return {
@@ -53,6 +54,7 @@ async function handleLogin(userName, userPass) {
             firstName,
             lastName,
             userType,
+            courses,
           },
         }
       }
