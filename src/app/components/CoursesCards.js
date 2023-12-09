@@ -2,7 +2,7 @@
 
 import React from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
-// import AnnouncementIcon from '@mui/icons-material/Announcement'
+import Tooltip from '@mui/material/Tooltip'
 import { NotificationsSharp } from '@mui/icons-material'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import ChatIcon from '@mui/icons-material/Chat'
@@ -201,17 +201,23 @@ const Courses = ({ courseCardInfo }) => {
                 { icon: 'files', link: '/files' },
                 { icon: 'chat', link: `/chat/${courseId}` },
               ].map((item) => (
-                <a key={item.icon} href={item.link}>
-                  <div
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {getMuiIcon(item.icon)}
-                  </div>
-                </a>
+                <Tooltip
+                  key={item.icon}
+                  title={`View ${item.icon}`}
+                  placement="top"
+                >
+                  <a key={item.icon} href={item.link}>
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {getMuiIcon(item.icon)}
+                    </div>
+                  </a>
+                </Tooltip>
               ))}
             </div>
           </div>
