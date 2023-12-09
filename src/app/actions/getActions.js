@@ -17,9 +17,27 @@ const getUser = async (payload, findById = false) => {
 
       return { userId: payload, firstName, userType }
     } else {
-      const getUserResp = await usersModel.findOne({ email: payload })
+      const {
+        _id,
+        userName,
+        email,
+        firstName,
+        lastName,
+        userType,
+        courses,
+      } = await usersModel.findOne({ email: payload })
 
-      return getUserResp
+      console.log('userType actions', userType)
+
+      return {
+        userId: _id.toString(),
+        userName,
+        email,
+        firstName,
+        lastName,
+        userType,
+        courses,
+      }
     }
   } catch (error) {
     console.log('Error while finding the user in getUser', error)

@@ -17,6 +17,7 @@ export const authOptions = {
           }
 
           console.log('login confirmed...', user?.email, user?.userType)
+          loggedUser = user
 
           return user
         } else {
@@ -45,7 +46,6 @@ export const authOptions = {
         const user = await getUser(profile.email)
 
         if (user?.email) {
-          user._id = user._id.toString()
           loggedUser = user
           return true
         }
@@ -57,7 +57,7 @@ export const authOptions = {
     jwt: async ({ token, user }) => {
       user && (token.user = user)
       if (user && loggedUser) {
-        token.user.userId = loggedUser._id
+        token.user.userId = loggedUser.userId
         token.user.userType = loggedUser.userType
         token.user.courses = loggedUser.courses
       }

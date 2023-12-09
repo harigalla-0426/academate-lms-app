@@ -8,7 +8,7 @@ import ClearRoundedIcon from '@mui/icons-material/ClearRounded'
 import ClearAllRoundedIcon from '@mui/icons-material/ClearAllRounded'
 import EventIcon from '@mui/icons-material/Event'
 
-const AnnounceDueSoon = () => {
+const AnnounceDueSoon = ({ courseDeadlines }) => {
   // Announcing state
   const [announcements, setAnnouncements] = useState([
     {
@@ -43,40 +43,18 @@ const AnnounceDueSoon = () => {
     )
   }
 
+  const sortedDeadlines = courseDeadlines
+    .filter((event) => new Date(event.date.split('|')[0].trim()) >= new Date())
+    .sort(
+      (a, b) =>
+        new Date(a.date.split('|')[0].trim()) -
+        new Date(b.date.split('|')[0].trim()),
+    )
+
   // DueSoon state
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: 'Assignment 2',
-      subtitle: 'CSCI-B505',
-      date: 'Oct 30, 2023 at 18:30 | 68 points',
-    },
-    {
-      id: 2,
-      title: 'Assignment 2',
-      subtitle: 'CSCI-B505',
-      date: 'Oct 30, 2023 at 18:30 | 68 points',
-    },
-    {
-      id: 3,
-      title: 'Assignment 2',
-      subtitle: 'CSCI-B505',
-      date: 'Oct 30, 2023 at 18:30 | 68 points',
-    },
-    {
-      id: 4,
-      title: 'Assignment 2',
-      subtitle: 'CSCI-B505',
-      date: 'Oct 30, 2023 at 18:30 | 68 points',
-    },
-    {
-      id: 5,
-      title: 'Assignment 2',
-      subtitle: 'CSCI-B505',
-      date: 'Oct 30, 2023 at 18:30 | 68 points',
-    },
-    // Add more notifications as needed
-  ])
+  const [notifications, setNotifications] = useState(
+    sortedDeadlines.slice(0, 4),
+  )
 
   const handleRemoveNotification = (id) => {
     setNotifications(

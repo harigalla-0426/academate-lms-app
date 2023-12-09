@@ -31,8 +31,6 @@ async function handleLogin(userName, userPass) {
         loginResp?.password,
       )
 
-      console.log('After handle login auth')
-
       if (isAuthenticated) {
         const {
           _id,
