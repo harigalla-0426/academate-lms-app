@@ -19,16 +19,13 @@ const SideNavBar = () => {
 
   const menuItems = [
     { name: 'Home', isHeader: true },
-    'Dashboard',
-    'Courses',
-    'Announcements',
-    'Chat Forum',
+    { name: 'Dashboard', link: '/dashboard' },
+    { name: 'Courses', link: '/courses' },
+    { name: 'Announcements', link: '/announcements' },
     { name: 'Submissions', isHeader: true },
-    'Assignments',
-    'Grades',
+    { name: 'Assignments', link: '/assignments' },
+    { name: 'Grades', link: '/grades' },
     { name: 'Control Panel', isHeader: true },
-    'Account',
-    'Notifications',
   ]
 
   return (
@@ -54,8 +51,7 @@ const SideNavBar = () => {
       </div>
       {session?.user ? (
         menuItems.map((item, index) => {
-          const isHeader = typeof item === 'object' && item.isHeader
-          const name = typeof item === 'object' ? item.name : item
+          const { name, isHeader, link } = item
 
           return isHeader ? (
             <Header key={index}>
@@ -63,13 +59,9 @@ const SideNavBar = () => {
             </Header>
           ) : (
             <ListItem button key={index}>
-              {name === 'Announcements' ? (
-                <ListItemText>
-                  <a href="/announcelist">{name}</a>
-                </ListItemText>
-              ) : (
-                <ListItemText primary={name} />
-              )}
+              <ListItemText>
+                <a href={link}>{name}</a>
+              </ListItemText>
             </ListItem>
           )
         })

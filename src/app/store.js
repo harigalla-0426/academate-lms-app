@@ -1,11 +1,12 @@
 import { create } from 'zustand'
 
 const useStore = create((set) => ({
-  forgotObj: null,
-  setForgotObj: (email, accessToken) => {
-    set((state) => ({ forgotObj: { email, accessToken } }))
-  },
-  resetForgotObj: () => set({ forgotObj: null }),
+  storeCourseObj: null,
+  storeCourseCards: null,
+  storeCourseDeadlines: null,
+  setCourseObj: (newObj) => set({ storeCourseObj: newObj }),
+  setCourseCards: (newObj) => set({ storeCourseCards: newObj }),
+  setCourseDeadlines: (newObj) => set({ storeCourseDeadlines: newObj }),
 }))
 
 export default useStore

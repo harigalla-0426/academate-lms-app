@@ -12,21 +12,31 @@ const RegisterForm = () => {
   const courseOptions = [
     {
       courseId: '6540251f5baebb7598f23131',
-      courseTitle: 'Test_ComputerScience',
+      courseTitle: 'Applied Algorithms',
     },
-    { courseId: '654d379ea7b90d1ca63b5b92', courseTitle: 'Test_Mathematics' },
-    { courseId: '654d37c4a7b90d1ca63b5b93', courseTitle: 'Test_English' },
     {
       courseId: '6540251f5baebb7598f23132',
       courseTitle: 'Elements of AI',
     },
     {
       courseId: '654d379ea7b90d1ca63b5b94',
-      courseTitle: 'Applied Machine Learning',
+      courseTitle: 'Software Engineering I',
     },
     {
       courseId: '654d37c4a7b90d1ca63b5b95',
-      courseTitle: 'Software Engineering I',
+      courseTitle: 'Distributed Systems',
+    },
+    {
+      courseId: '6540251f5baebb7598f23134',
+      courseTitle: 'Human Computer Interaction',
+    },
+    {
+      courseId: '6540251f5baebb7598f23133',
+      courseTitle: 'Intro to Psychology',
+    },
+    {
+      courseId: '6540251f5baebb7598f23245',
+      courseTitle: 'Historical Sciences',
     },
   ]
 
@@ -40,8 +50,8 @@ const RegisterForm = () => {
     const userType = formData.get('user-type')
 
     const courseOption1 = formData.get('course-option-0')
-    const courseOption2 = formData.get('course-option-1')
-    const courseOption3 = formData.get('course-option-2')
+    const courseOption2 = formData.get('course-option-1') || null
+    const courseOption3 = formData.get('course-option-2') || null
 
     if (
       !firstName.trim() ||
@@ -74,6 +84,10 @@ const RegisterForm = () => {
       return
     }
 
+    const selectedOptions = [courseOption1, courseOption2, courseOption3]
+
+    // console.log('selectedOptions', selectedOptions)
+
     formRef.current.reset()
 
     const { success, message } = await toast.promise(
@@ -84,6 +98,7 @@ const RegisterForm = () => {
         lastName,
         email,
         userType,
+        selectedOptions,
       }),
       {
         pending: 'Trying to Register you...',
@@ -235,10 +250,7 @@ const RegisterForm = () => {
               name={`course-option-${index}`}
             >
               {courseOptions.map((course) => (
-                <option
-                  key={course.courseId} // Use a unique key for each option
-                  value={course.courseId}
-                >
+                <option key={course.courseId} value={course.courseId}>
                   {course.courseTitle}
                 </option>
               ))}

@@ -4,9 +4,6 @@ import connectDB from '../config/db'
 import usersModel from '../models/usersModel'
 import coursesModel from '../models/coursesModel'
 
-// shared variables
-let courseResp = null
-
 const getUser = async (payload, findById = false) => {
   await connectDB()
 
@@ -49,7 +46,7 @@ const getChats = async (chatId) => {
   await connectDB()
 
   try {
-    courseResp = courseResp || (await coursesModel.findById(chatId))
+    const courseResp = await coursesModel.findById(chatId)
 
     if (!courseResp || !courseResp?.discussions) {
       throw new Error('ID not found in the courses DB!')
@@ -72,7 +69,7 @@ const hasChatAccess = async (chatId, userId, userType) => {
 
   try {
     let hasAccess = false
-    courseResp = courseResp || (await coursesModel.findById(chatId))
+    const courseResp = await coursesModel.findById(chatId)
 
     if (userType === 'faculty') {
       hasAccess = courseResp?.instructor.toString() === userId
@@ -145,15 +142,13 @@ const getAnnouncements = async (courseId) => {
   await connectDB()
 
   try {
-    const { announcments: announcements } = await coursesModel.findById(
-      courseId,
-    )
+    const { title, announcements } = await coursesModel.findById(courseId)
 
     if (!announcements) {
       throw new Error('Could not find announcements for the given courseId!')
     }
 
-    return announcements
+    return { title, announcements }
   } catch (error) {
     console.log('Get announcements Error', error)
     return {
