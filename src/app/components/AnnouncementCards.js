@@ -9,6 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded'
 import EventIcon from '@mui/icons-material/Event'
+import Link from 'next/link'
 
 const AnnounceDueSoon = ({ courseDeadlines, viewAssignmentMode }) => {
   // Announcing state
@@ -47,17 +48,19 @@ const AnnounceDueSoon = ({ courseDeadlines, viewAssignmentMode }) => {
 
   // console.log('courseDeadlines', courseDeadlines)
 
-  const sortedDeadlines = courseDeadlines
-    .filter((event) => new Date(event.date.split('|')[0].trim()) >= new Date())
-    .sort(
-      (a, b) =>
-        new Date(a.date.split('|')[0].trim()) -
-        new Date(b.date.split('|')[0].trim()),
-    )
+  const sortedDeadlines = courseDeadlines.sort(
+    (a, b) =>
+      new Date(a.date.split('|')[0].trim()) -
+      new Date(b.date.split('|')[0].trim()),
+  )
+
+  const filteredDeadline = sortedDeadlines.filter(
+    (event) => new Date(event.date.split('|')[0].trim()) >= new Date(),
+  )
 
   // DueSoon state
   const [notifications, setNotifications] = useState(
-    sortedDeadlines.slice(0, 4),
+    filteredDeadline.slice(0, 4),
   )
 
   const handleRemoveNotification = (id) => {
@@ -171,7 +174,10 @@ const AnnounceDueSoon = ({ courseDeadlines, viewAssignmentMode }) => {
   )
 
   return (
-    <Container maxWidth="xs" style={{ padding: 16 }}>
+    <Container
+      maxWidth={viewAssignmentMode ? 'auto' : 'xs'}
+      style={{ padding: 16 }}
+    >
       {viewAssignmentMode ? (
         <>
           <Box className="mt-8">
@@ -189,14 +195,16 @@ const AnnounceDueSoon = ({ courseDeadlines, viewAssignmentMode }) => {
                 <ClearAllRoundedIcon />
               </IconButton>
             </Box>
-            <Box className="flex flex-col items-center">
+            <Box className="flex flex-wrap">
               {sortedDeadlines.map((assignment) => (
-                <a
+                <Link
                   key={assignment.id}
-                  href={`assignments/${assignment?.id.split('-')[0]}`}
+                  href={`assignments/${assignment?.id}`}
+                  passHref
+                  className="w-full md:w-1/2 lg:w-1/3 p-2"
                 >
                   <AssignmentCard assignment={assignment} />
-                </a>
+                </Link>
               ))}
             </Box>
           </Box>
@@ -271,7 +279,7 @@ const AssignmentCard = ({ assignment }) => {
 
   return (
     <Box
-      className="border rounded border-gray-300 mb-4 p-4 w-full max-w-sm"
+      className="border rounded border-gray-800 mb-4 p-4 w-full max-w-sm"
       boxShadow="sm"
     >
       <Typography variant="h6" className="text-blue-900 font-semibold mb-2">

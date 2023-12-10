@@ -21,7 +21,7 @@ const SideNavBar = () => {
     { name: 'Home', isHeader: true },
     { name: 'Dashboard', link: '/dashboard' },
     { name: 'Courses', link: '/courses' },
-    { name: 'Announcements', link: '/announcelist' },
+    { name: 'Announcements', link: '/announcements' },
     { name: 'Submissions', isHeader: true },
     { name: 'Assignments', link: '/assignments' },
     { name: 'Grades', link: '/grades' },
