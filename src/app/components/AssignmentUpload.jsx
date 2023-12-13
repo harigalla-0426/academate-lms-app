@@ -117,22 +117,24 @@ function AssignmentUpload({ assignmentUploadObj }) {
         </div>
         <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
-            <span className="font-bold text-gray-700">Course Title:</span>{' '}
+            <span className="font-bold text-gray-700">Course Title: </span>
             {courseTitle}
           </div>
           <div>
-            <span className="font-bold text-gray-700">Assignment Title:</span>{' '}
+            <span className="font-bold text-gray-700">Assignment Title: </span>
             {title}
           </div>
           <div>
-            <span className="font-bold text-gray-700">Description:</span>{' '}
+            <span className="font-bold text-gray-700">Description: </span>
             {description}
           </div>
           <div>
-            <span className="font-bold text-gray-700">Due Date:</span> {dueDate}
+            <span className="font-bold text-gray-700">Due Date: </span>
+            {dueDate}
           </div>
           <div>
-            <span className="font-bold text-gray-700">Points:</span> {points}
+            <span className="font-bold text-gray-700">Points: </span>
+            {points}
           </div>
         </div>
       </div>
