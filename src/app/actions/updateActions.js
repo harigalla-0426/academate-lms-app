@@ -30,7 +30,7 @@ async function addChat(chatId, chatObj) {
   try {
     await connectDB()
 
-    pusherServer.trigger(chatId, 'incoming-messages', chatObj)
+    await pusherServer.trigger(chatId, 'incoming-messages', chatObj)
 
     const isUpdated = await coursesModel.updateOne(
       { _id: chatId },
