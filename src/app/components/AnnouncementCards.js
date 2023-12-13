@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react'
 import { Container, Paper, Typography, IconButton, Box } from '@mui/material'
+import ClearAllRoundedIcon from '@mui/icons-material/ClearAllRounded'
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn'
+import AccessTimeIcon from '@mui/icons-material/AccessTime'
 import DeleteIcon from '@mui/icons-material/Delete'
 import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded'
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded'
-import ClearAllRoundedIcon from '@mui/icons-material/ClearAllRounded'
 import EventIcon from '@mui/icons-material/Event'
+import Link from 'next/link'
 
-const AnnounceDueSoon = ({ courseDeadlines }) => {
+const AnnounceDueSoon = ({ courseDeadlines, viewAssignmentMode }) => {
   // Announcing state
   const [announcements, setAnnouncements] = useState([
     {
@@ -43,17 +46,21 @@ const AnnounceDueSoon = ({ courseDeadlines }) => {
     )
   }
 
-  const sortedDeadlines = courseDeadlines
-    .filter((event) => new Date(event.date.split('|')[0].trim()) >= new Date())
-    .sort(
-      (a, b) =>
-        new Date(a.date.split('|')[0].trim()) -
-        new Date(b.date.split('|')[0].trim()),
-    )
+  // console.log('courseDeadlines', courseDeadlines)
+
+  const sortedDeadlines = courseDeadlines.sort(
+    (a, b) =>
+      new Date(a.date.split('|')[0].trim()) -
+      new Date(b.date.split('|')[0].trim()),
+  )
+
+  const filteredDeadline = sortedDeadlines.filter(
+    (event) => new Date(event.date.split('|')[0].trim()) >= new Date(),
+  )
 
   // DueSoon state
   const [notifications, setNotifications] = useState(
-    sortedDeadlines.slice(0, 4),
+    filteredDeadline.slice(0, 4),
   )
 
   const handleRemoveNotification = (id) => {
@@ -167,56 +174,125 @@ const AnnounceDueSoon = ({ courseDeadlines }) => {
   )
 
   return (
-    <Container maxWidth="xs" style={{ padding: 16 }}>
-      <Box
-        display="flex"
-        alignItems="center"
-        gap={4}
-        style={{ marginBottom: 16 }}
-      >
-        <div style={{ width: 16, height: 16, position: 'relative' }}>
-          <div
-            style={{
-              width: 1,
-              height: 11,
-              left: 7.5,
-              top: 2.5,
-              position: 'absolute',
-              border: '0.88px #545454 solid',
-            }}
-          ></div>
-        </div>
-        <EventIcon />
-        <Typography variant="h6" gutterBottom>
-          Upcoming Events
-        </Typography>
-      </Box>
-      <Box>
-        {announcements.map((announcement) =>
-          renderAnnouncingCard(announcement),
-        )}
-      </Box>
-      <Box marginTop={2}>
-        <Box display="flex" justifyContent="center" alignItems="center" mb={3}>
-          <PriorityHighRoundedIcon style={{ color: '#545454', fontSize: 24 }} />
-          <Typography
-            variant="h3"
-            color="black"
-            fontSize={24}
-            fontFamily="Inter"
-            fontWeight={400}
+    <Container
+      maxWidth={viewAssignmentMode ? 'auto' : 'xs'}
+      style={{ padding: 16 }}
+    >
+      {viewAssignmentMode ? (
+        <>
+          <Box className="mt-8">
+            <Box className="flex justify-between items-center mb-6">
+              <Box className="flex items-center">
+                <PriorityHighRoundedIcon className="text-gray-700 mr-2" />
+                <Typography
+                  variant="h5"
+                  className="text-black text-xl font-medium"
+                >
+                  All Assignments
+                </Typography>
+              </Box>
+              <IconButton>
+                <ClearAllRoundedIcon />
+              </IconButton>
+            </Box>
+            <Box className="flex flex-wrap">
+              {sortedDeadlines.map((assignment) => (
+                <Link
+                  key={assignment.id}
+                  href={`assignments/${assignment?.id}`}
+                  passHref
+                  className="w-full md:w-1/2 lg:w-1/3 p-2"
+                >
+                  <AssignmentCard assignment={assignment} />
+                </Link>
+              ))}
+            </Box>
+          </Box>
+        </>
+      ) : (
+        <>
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={4}
+            style={{ marginBottom: 16 }}
           >
-            Due Soon
-          </Typography>
-          <IconButton onClick={handleClearAllNotifications}>
-            <ClearAllRoundedIcon style={{ fontSize: 24 }} />
-          </IconButton>
-        </Box>
-        <Box display="flex" flexDirection="column" alignItems="center">
-          {notifications.map((notification) => renderDueSoonCard(notification))}
-        </Box>
-      </Box>
+            <div style={{ width: 16, height: 16, position: 'relative' }}>
+              <div
+                style={{
+                  width: 1,
+                  height: 11,
+                  left: 7.5,
+                  top: 2.5,
+                  position: 'absolute',
+                  border: '0.88px #545454 solid',
+                }}
+              ></div>
+            </div>
+            <EventIcon />
+            <Typography variant="h6" gutterBottom>
+              Upcoming Events
+            </Typography>
+          </Box>
+          <Box>
+            {announcements.map((announcement) =>
+              renderAnnouncingCard(announcement),
+            )}
+          </Box>
+          <Box marginTop={2}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              mb={3}
+            >
+              <PriorityHighRoundedIcon
+                style={{ color: '#545454', fontSize: 24 }}
+              />
+              <Typography
+                variant="h3"
+                color="black"
+                fontSize={24}
+                fontFamily="Inter"
+                fontWeight={400}
+              >
+                Due Soon
+              </Typography>
+              <IconButton onClick={handleClearAllNotifications}>
+                <ClearAllRoundedIcon style={{ fontSize: 24 }} />
+              </IconButton>
+            </Box>
+            <Box display="flex" flexDirection="column" alignItems="center">
+              {notifications.map((notification) =>
+                renderDueSoonCard(notification),
+              )}
+            </Box>
+          </Box>
+        </>
+      )}
     </Container>
+  )
+}
+
+const AssignmentCard = ({ assignment }) => {
+  const { title, subtitle, date } = assignment
+
+  return (
+    <Box
+      className="border rounded border-gray-800 mb-4 p-4 w-full max-w-sm"
+      boxShadow="sm"
+    >
+      <Typography variant="h6" className="text-blue-900 font-semibold mb-2">
+        {title}
+      </Typography>
+      <Typography variant="body2" className="text-gray-600 mb-2">
+        Course: {subtitle}
+      </Typography>
+      <Typography variant="body2" className="text-gray-600 flex items-center">
+        <AccessTimeIcon className="mr-1" />
+        Due Date: {date}
+      </Typography>
+    </Box>
   )
 }
 

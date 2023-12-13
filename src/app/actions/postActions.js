@@ -11,8 +11,6 @@ async function handleLogin(userName, userPass) {
   try {
     await connectDB()
 
-    console.log('After connecting to the DB')
-
     let loginResp = null
     if (/^\S+@\S+\.\S+$/.test(userName)) {
       loginResp = await usersModel.findOne({ email: userName })
@@ -64,6 +62,20 @@ async function handleLogin(userName, userPass) {
   }
 }
 
+async function addStudent(courseId, userID) {
+  try {
+    const isAdded = await coursesModel.updateOne(
+      { _id: courseId },
+      { $push: { studentsEnrolled: userID } },
+    )
+
+    return isAdded
+  } catch (error) {
+    console.log('Error while adding Student', error?.message)
+    return false
+  }
+}
+
 async function handleRegistration({
   userName,
   userPass,
@@ -71,7 +83,7 @@ async function handleRegistration({
   lastName,
   email,
   userType,
-  courseOptions,
+  selectedOptions: courseOptions,
 }) {
   try {
     if (!/^[a-zA-Z0-9_]{4,20}$/.test(userName)) {
@@ -98,6 +110,13 @@ async function handleRegistration({
       return { success: false, message: 'Please enter a valid email!' }
     }
 
+    if (!courseOptions) {
+      return {
+        success: false,
+        message: 'Please select a valid combination of courses!',
+      }
+    }
+
     console.log('everything valid')
     await connectDB()
 
@@ -105,7 +124,7 @@ async function handleRegistration({
       _id: { $in: courseOptions },
     })
 
-    if (validCourses.length !== courseOptions.length) {
+    if (!validCourses || validCourses.length !== courseOptions.length) {
       return {
         success: false,
         message: 'Course id not found',
@@ -114,6 +133,21 @@ async function handleRegistration({
 
     const hashedPass = await bcrypt.hash(userPass, 11)
 
+    if (userType === 'admin' || userType === 'faculty') {
+      // handle admin and faculty type registration
+      return {
+        success: true,
+        message:
+          'Notification sent to the admin! Your request is being processed!',
+      }
+    }
+
+    const courses = courseOptions.map((courseId) => {
+      const courseGPA = 75
+
+      return { courseId, courseGPA }
+    })
+
     const newUser = new usersModel({
       userName,
       email,
@@ -121,15 +155,27 @@ async function handleRegistration({
       firstName,
       lastName,
       userType,
+      courses,
     })
 
     try {
       const loginUser = await newUser.save()
 
       if (loginUser) {
-        return {
-          success: true,
-          message: 'User registration successful!',
+        const addStudentPromises = courseOptions.map((courseId) =>
+          addStudent(courseId, loginUser._id.toString()),
+        )
+
+        const results = await Promise.all(addStudentPromises)
+
+        // Check if all students were added successfully
+        if (results.every((isAdded) => isAdded)) {
+          return {
+            success: true,
+            message: 'User registration successful!',
+          }
+        } else {
+          throw new Error('Some students could not be added to the courses!')
         }
       }
     } catch (error) {
@@ -144,7 +190,10 @@ async function handleRegistration({
     }
   } catch (error) {
     console.log('unknown error', error)
-    return { success: false, message: 'Oops! Something went wrong!' }
+    return {
+      success: false,
+      message: error?.message || 'Oops! Something went wrong!',
+    }
   }
 }
 
@@ -198,6 +247,72 @@ async function handleForgetPassword(userEmail) {
   }
 }
 
+async function postAnnouncements({ courseId, title, description, timestamp }) {
+  await connectDB()
+
+  try {
+    const isAddedAnnouncement = await coursesModel.updateOne(
+      { _id: courseId },
+      { $push: { announcements: { title, description, timestamp } } },
+    )
+
+    return {
+      success: isAddedAnnouncement,
+      messageSuccess: 'Faculty Announcement Posted!',
+      messageFail: 'Could not post the Announcement!',
+    }
+  } catch (error) {
+    console.log('unknown error in postAnnouncements', error)
+    return {
+      success: false,
+      messageFail: error?.message || 'Oops! Something went wrong!',
+    }
+  }
+}
+
+async function postSubmission(
+  courseId,
+  userId,
+  assignment_title,
+  file_URL = null,
+) {
+  await connectDB()
+
+  try {
+    if (!file_URL) {
+      return
+    }
+
+    const isSubmissionUpdated = await coursesModel.findOneAndUpdate(
+      {
+        _id: courseId,
+        'assignments.title': assignment_title,
+      },
+      {
+        $push: {
+          'assignments.$.submissions': { userId, file_URL },
+        },
+      },
+      {
+        new: true,
+      },
+    )
+
+    return {
+      success: isSubmissionUpdated,
+      messageSuccess: 'Submission uploaded successfully!',
+      messageFail: 'Could not post the Submission!',
+    }
+  } catch (error) {
+    console.log('unknown error in postSubmission', error)
+    return {
+      success: false,
+      messageFail: error?.message || 'Oops! Something went wrong!',
+    }
+  }
+}
+
+// helper function
 const returnEmailTemplate = (userEmail, accessToken) => {
   return {
     to: userEmail,
@@ -246,4 +361,10 @@ const returnEmailTemplate = (userEmail, accessToken) => {
   }
 }
 
-export { handleLogin, handleRegistration, handleForgetPassword }
+export {
+  handleLogin,
+  handleRegistration,
+  handleForgetPassword,
+  postAnnouncements,
+  postSubmission,
+}
