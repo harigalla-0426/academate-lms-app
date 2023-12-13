@@ -165,7 +165,7 @@ function AssignmentUpload({ assignmentUploadObj }) {
               ) : (
                 <p className="text-center">
                   <CloudUploadIcon className="text-4xl mb-2 mx-4" />
-                  Drag 'n' drop some files here, or click to select files
+                  Drag and drop some files here, or click to select files
                 </p>
               )}
             </div>
