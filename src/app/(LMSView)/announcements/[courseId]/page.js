@@ -26,7 +26,10 @@ async function CourseAnnouncements({ params: { courseId } }) {
       <div className="mb-4 flex items-center">
         <SearchBarcompo />
       </div>
-      <AnnounceListingcompo announcements={announcementList} />
+      <AnnounceListingcompo
+        courseId={courseId}
+        announcements={announcementList}
+      />
     </div>
   )
 }
