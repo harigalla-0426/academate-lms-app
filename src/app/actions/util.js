@@ -2,11 +2,6 @@
 
 import { getCourses, getUser } from '@/app/actions/getActions'
 
-let coursesObj = null
-let courseListing = null
-let courseCardInfo = null
-let courseEvents = null
-
 const processCourseInfo = async (session, courseIdFilter = null) => {
   let {
     user: { email, courses },
@@ -14,39 +9,32 @@ const processCourseInfo = async (session, courseIdFilter = null) => {
 
   // console.log('courses list', courses)
 
-  if (!coursesObj) {
-    if (typeof courses[0] !== 'object') {
-      const getUserResp = await getUser(email)
-      courses = getUserResp?.courses
-    }
-
-    const courseList = courses.map((x) => x?.courseId)
-
-    coursesObj = await getCourses(courseList)
+  if (typeof courses[0] !== 'object') {
+    const getUserResp = await getUser(email)
+    courses = getUserResp?.courses
   }
+
+  const courseList = courses.map((x) => x?.courseId)
+
+  const coursesObj = await getCourses(courseList)
 
   // console.log('coursesObj', coursesObj)
-  if (!courseListing) {
-    courseListing = coursesObj.map(({ courseId, title }) => {
-      courseId, title
-    })
-  }
 
-  if (!courseCardInfo) {
-    courseCardInfo = coursesObj.map(({ courseId, title, description }) => {
-      let { courseGPA } = courses.find((cs) => cs.courseId === courseId)
+  const courseListing = coursesObj.map(({ courseId, title }) => {
+    courseId, title
+  })
 
-      if (!courseGPA) {
-        courseGPA = 0
-      }
+  const courseCardInfo = coursesObj.map(({ courseId, title, description }) => {
+    let { courseGPA } = courses.find((cs) => cs.courseId === courseId)
 
-      return { courseId, title, description, courseGPA }
-    })
-  }
+    if (!courseGPA) {
+      courseGPA = 0
+    }
 
-  if (!courseEvents) {
-    courseEvents = coursesObj.map((course) => course?.assignments)
-  }
+    return { courseId, title, description, courseGPA }
+  })
+
+  const courseEvents = coursesObj.map((course) => course?.assignments)
 
   const courseDeadlines = getCourseDeadlines(coursesObj, courseIdFilter)
 

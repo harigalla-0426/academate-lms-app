@@ -63,12 +63,17 @@ async function handleLogin(userName, userPass) {
 }
 
 async function addStudent(courseId, userID) {
-  const isAdded = await coursesModel.updateOne(
-    { _id: courseId },
-    { $push: { studentsEnrolled: userID } },
-  )
+  try {
+    const isAdded = await coursesModel.updateOne(
+      { _id: courseId },
+      { $push: { studentsEnrolled: userID } },
+    )
 
-  return isAdded
+    return isAdded
+  } catch (error) {
+    console.log('Error while adding Student', error?.message)
+    return false
+  }
 }
 
 async function handleRegistration({
@@ -242,6 +247,72 @@ async function handleForgetPassword(userEmail) {
   }
 }
 
+async function postAnnouncements({ courseId, title, description, timestamp }) {
+  await connectDB()
+
+  try {
+    const isAddedAnnouncement = await coursesModel.updateOne(
+      { _id: courseId },
+      { $push: { announcements: { title, description, timestamp } } },
+    )
+
+    return {
+      success: isAddedAnnouncement,
+      messageSuccess: 'Faculty Announcement Posted!',
+      messageFail: 'Could not post the Announcement!',
+    }
+  } catch (error) {
+    console.log('unknown error in postAnnouncements', error)
+    return {
+      success: false,
+      messageFail: error?.message || 'Oops! Something went wrong!',
+    }
+  }
+}
+
+async function postSubmission(
+  courseId,
+  userId,
+  assignment_title,
+  file_URL = null,
+) {
+  await connectDB()
+
+  try {
+    if (!file_URL) {
+      return
+    }
+
+    const isSubmissionUpdated = await coursesModel.findOneAndUpdate(
+      {
+        _id: courseId,
+        'assignments.title': assignment_title,
+      },
+      {
+        $push: {
+          'assignments.$.submissions': { userId, file_URL },
+        },
+      },
+      {
+        new: true,
+      },
+    )
+
+    return {
+      success: isSubmissionUpdated,
+      messageSuccess: 'Submission uploaded successfully!',
+      messageFail: 'Could not post the Submission!',
+    }
+  } catch (error) {
+    console.log('unknown error in postSubmission', error)
+    return {
+      success: false,
+      messageFail: error?.message || 'Oops! Something went wrong!',
+    }
+  }
+}
+
+// helper function
 const returnEmailTemplate = (userEmail, accessToken) => {
   return {
     to: userEmail,
@@ -290,4 +361,10 @@ const returnEmailTemplate = (userEmail, accessToken) => {
   }
 }
 
-export { handleLogin, handleRegistration, handleForgetPassword }
+export {
+  handleLogin,
+  handleRegistration,
+  handleForgetPassword,
+  postAnnouncements,
+  postSubmission,
+}

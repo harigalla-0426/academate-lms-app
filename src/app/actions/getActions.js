@@ -158,4 +158,42 @@ const getAnnouncements = async (courseId) => {
   }
 }
 
-export { getUser, getChats, hasChatAccess, getAnnouncements, getCourses }
+const getSubmissions = async (courseId, assignmentTitle) => {
+  await connectDB()
+
+  try {
+    const { assignments } = await coursesModel.findOne(
+      {
+        _id: courseId,
+        'assignments.title': assignmentTitle,
+      },
+      { 'assignments.$': 1 },
+    )
+
+    if (!assignments || !assignments.length) {
+      throw new Error('Could not find submissions for the given courseId!')
+    }
+
+    console.log('submissions', assignments[0]?.submissions)
+
+    return {
+      success: true,
+      data: assignments[0]?.submissions,
+    }
+  } catch (error) {
+    console.log('Get submissions Error', error)
+    return {
+      success: false,
+      message: error?.message || 'Oops! Something went wrong!',
+    }
+  }
+}
+
+export {
+  getUser,
+  getChats,
+  hasChatAccess,
+  getAnnouncements,
+  getCourses,
+  getSubmissions,
+}
